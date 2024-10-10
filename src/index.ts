@@ -2,7 +2,7 @@ import DiContainer from "./container"
 import DiInjection from "./injection"
 import DiInfo from "./info"
 import DiMetadata from "./metedata"
-import { AllConstructors } from "./utils"
+import { AllConstructors, Constructor } from "./utils"
 import Config from './config'
 
 export function Inject(token?: any) {
@@ -89,6 +89,13 @@ export function DiFrom(instance: any) {
       }
       const data = container.track(fn)
       return token ? container.setData(token, data) : container.addData(data)
+    },
+    factory: <T extends Constructor>(ctor: T) => {
+      const container = DiContainer.Get(instance)
+      if (!container) {
+        throw new Error(`'${instance.constructor.name}' must be created with container`)
+      }
+      return container.factory(ctor) as InstanceType<T>
     }
   }
 }
