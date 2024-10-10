@@ -1,6 +1,6 @@
 {
   "name": "anydi",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "ioc di anywhere AnyDI",
   "main": "index.js",
   "scripts": {
