@@ -21,6 +21,8 @@ export function InjectRef(ref: () => any) {
   }
 }
 
+export type ToType<T> = T
+
 export function Optional({ token, ref }: {
   token?: any
   ref?: () => any
