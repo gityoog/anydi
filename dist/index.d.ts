@@ -6,6 +6,7 @@ import { AllConstructors, Constructor } from "./utils";
 import Config from './config';
 export declare function Inject(token?: any): <T extends Object>(prototype: T, key: string) => void;
 export declare function InjectRef(ref: () => any): <T extends Object>(prototype: T, key: string) => void;
+export type ToType<T> = T;
 export declare function Optional({ token, ref }?: {
     token?: any;
     ref?: () => any;
