@@ -16,7 +16,8 @@ export function Inject(token?: any) {
 export function InjectRef(ref: () => any) {
   return function <T extends Object>(prototype: T, key: string) {
     return DiMetadata.defineInjection(prototype, key, new DiInjection({
-      ref
+      ref,
+      lazy: true
     }))
   }
 }
