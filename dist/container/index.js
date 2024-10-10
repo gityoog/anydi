@@ -15,6 +15,7 @@ class DiContainer {
         this.dataMap = new WeakMap();
         this.dataSet = new Set();
         this.resolvers = new WeakMap();
+        this.creating = new WeakMap();
         this.children = new Set();
         this.id = DiContainer.id++;
         this.isDestroyed = false;
@@ -50,8 +51,14 @@ class DiContainer {
         if (data !== undefined) {
             return data;
         }
+        if (this.creating.get(token)) {
+            console.log('Circular dependency with:', token.value);
+            throw new Error('Circular dependency');
+        }
+        this.creating.set(token, true);
         const value = this.track(() => this.resolve(token) || injection.factory());
         this.setData(token, value);
+        this.creating.delete(token);
         return value;
     }
     track(fn) {
@@ -97,6 +104,7 @@ class DiContainer {
             (_a = info_1.default.Get(data)) === null || _a === void 0 ? void 0 : _a.destroy();
         });
         this.dataSet.clear();
+        this.creating = null;
         this.dataSet = null;
         this.dataMap = null;
         this.parent = null;

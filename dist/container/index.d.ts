@@ -7,6 +7,7 @@ export default class DiContainer {
     private dataMap;
     private dataSet;
     private resolvers;
+    private creating;
     private children;
     private parent?;
     id: number;
