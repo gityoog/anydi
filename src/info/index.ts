@@ -21,6 +21,14 @@ export default class DiInfo {
       return info
     }
   }
+  static Create(ins: Data, prototypes?: Object[]) {
+    if (this.data.has(ins)) {
+      throw new Error('Instance already created')
+    }
+    const info = new this(ins, prototypes)
+    this.data.set(ins, info)
+    return info
+  }
   static Delete(ins: Data) {
     this.data.delete(ins)
   }
@@ -30,8 +38,7 @@ export default class DiInfo {
   private container
   private injections = new Map<string, DiInjection>()
   private destroyCallbacks: Function[]
-  constructor(private ins: Data) {
-    const prototypes = getPrototypeChain(ins)
+  constructor(private ins: Data, prototypes: Object[] = getPrototypeChain(ins)) {
     const isService = DiMetadata.isService(prototypes)
     if (!isService) {
       throw new Error(`'${ins.constructor.name}' must be decorated with @Service()`)
