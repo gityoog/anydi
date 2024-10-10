@@ -33,7 +33,8 @@ function Inject(token) {
 function InjectRef(ref) {
     return function (prototype, key) {
         return metedata_1.default.defineInjection(prototype, key, new injection_1.default({
-            ref
+            ref,
+            lazy: true
         }));
     };
 }
