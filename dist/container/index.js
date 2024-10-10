@@ -52,8 +52,8 @@ class DiContainer {
             return data;
         }
         if (this.creating.get(token)) {
-            console.log('Circular dependency with:', token.value);
-            throw new Error('Circular dependency');
+            console.warn('Circular dependency with:', token.value);
+            return undefined;
         }
         this.creating.set(token, true);
         const value = this.track(() => this.resolve(token) || injection.factory());
