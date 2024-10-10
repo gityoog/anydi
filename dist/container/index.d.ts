@@ -21,7 +21,7 @@ export default class DiContainer {
     private resolve;
     factory<T>(arg: DiInjection | T): T extends Constructor ? InstanceType<T> : any;
     track<T>(fn: () => T): T;
-    setData<T>(token: DiToken, data: T): void;
+    setData<T>(arg: DiToken | unknown, data: T): void;
     notify<T>(token: DiToken, data: T): void;
     addData<T>(data: T): T;
     private isDestroyed;

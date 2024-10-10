@@ -63,7 +63,8 @@ class DiContainer {
             track_1.default.pop();
         }
     }
-    setData(token, data) {
+    setData(arg, data) {
+        const token = arg instanceof token_1.default ? arg : token_1.default.GetOrCreate(arg);
         if (!this.dataMap.has(token)) {
             this.dataMap.set(token, data);
             this.addData(data);
