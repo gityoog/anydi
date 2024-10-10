@@ -22,6 +22,14 @@ class DiInfo {
             return info;
         }
     }
+    static Create(ins, prototypes) {
+        if (this.data.has(ins)) {
+            throw new Error('Instance already created');
+        }
+        const info = new this(ins, prototypes);
+        this.data.set(ins, info);
+        return info;
+    }
     static Delete(ins) {
         this.data.delete(ins);
     }
@@ -29,12 +37,11 @@ class DiInfo {
         var _a;
         return (_a = this.Get(ins)) === null || _a === void 0 ? void 0 : _a.container;
     }
-    constructor(ins) {
+    constructor(ins, prototypes = (0, utils_1.getPrototypeChain)(ins)) {
         this.ins = ins;
         this.injections = new Map();
         this.isInitialized = false;
         this.isDestroyed = false;
-        const prototypes = (0, utils_1.getPrototypeChain)(ins);
         const isService = metedata_1.default.isService(prototypes);
         if (!isService) {
             throw new Error(`'${ins.constructor.name}' must be decorated with @Service()`);
