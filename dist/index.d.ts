@@ -22,7 +22,7 @@ export declare function Container(...args: ConstructorParameters<typeof DiContai
 export declare function Destroy<T extends Object>(prototype: T, propertyKey: string, descriptor: PropertyDescriptor): void;
 export declare function DiFrom(instance: any): {
     for: <T>(fn: () => T) => T;
-    add: <T>(fn: () => T, token?: unknown) => void | T;
+    add: <T>(fn: () => T, token?: unknown) => T;
     factory: <T extends Constructor>(ctor: T) => InstanceType<T>;
 };
 export declare function Root(...args: ConstructorParameters<typeof DiContainer>): <T extends AllConstructors>(target: T) => T;

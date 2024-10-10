@@ -86,21 +86,23 @@ function Destroy(prototype, propertyKey, descriptor) {
     };
 }
 function DiFrom(instance) {
+    const container = container_1.default.Get(instance);
+    if (!container) {
+        throw new Error(`'${instance.constructor.name}' not found container`);
+    }
     return {
-        for: (fn) => info_1.default.GetOrCreate(instance).track(fn),
+        for: (fn) => container.track(fn),
         add: (fn, token) => {
-            const container = container_1.default.Get(instance);
-            if (!container) {
-                throw new Error(`'${instance.constructor.name}' must be created with container`);
-            }
             const data = container.track(fn);
-            return token ? container.setData(token, data) : container.addData(data);
+            if (token) {
+                container.setData(token, data);
+            }
+            else {
+                container.addData(data);
+            }
+            return data;
         },
         factory: (ctor) => {
-            const container = container_1.default.Get(instance);
-            if (!container) {
-                throw new Error(`'${instance.constructor.name}' must be created with container`);
-            }
             return container.factory(ctor);
         }
     };
