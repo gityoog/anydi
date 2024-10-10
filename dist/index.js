@@ -12,7 +12,8 @@ exports.Service = Service;
 exports.Container = Container;
 exports.Destroy = Destroy;
 exports.DiFrom = DiFrom;
-exports.DiRoot = DiRoot;
+exports.Root = Root;
+exports.setConfig = setConfig;
 const container_1 = __importDefault(require("./container"));
 exports.DiContainer = container_1.default;
 const injection_1 = __importDefault(require("./injection"));
@@ -21,6 +22,7 @@ const info_1 = __importDefault(require("./info"));
 exports.DiInfo = info_1.default;
 const metedata_1 = __importDefault(require("./metedata"));
 exports.DiMetadata = metedata_1.default;
+const config_1 = __importDefault(require("./config"));
 function Inject(token) {
     return function (prototype, key) {
         return metedata_1.default.defineInjection(prototype, key, new injection_1.default({
@@ -88,8 +90,12 @@ function DiFrom(instance) {
         for: (fn) => info_1.default.GetOrCreate(instance).track(fn)
     };
 }
-function DiRoot(...args) {
-    return {
-        for: (fn) => new container_1.default(...args).track(fn)
+function Root(...args) {
+    return function (target) {
+        metedata_1.default.defineRoot(target.prototype, args);
+        return target;
     };
+}
+function setConfig(newConfig) {
+    Object.assign(config_1.default, newConfig);
 }

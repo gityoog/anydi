@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const injection_1 = __importDefault(require("../injection"));
 const info_1 = __importDefault(require("../info"));
 const token_1 = __importDefault(require("../token"));
 const track_1 = __importDefault(require("../track"));
@@ -25,11 +26,9 @@ class DiContainer {
         parent.children.add(this);
         this.parent = parent;
     }
-    getData(token) {
+    getData(arg) {
         var _a;
-        if (!(token instanceof token_1.default)) {
-            token = token_1.default.GetOrCreate(token);
-        }
+        const token = arg instanceof token_1.default ? arg : token_1.default.GetOrCreate(arg);
         if (this.dataMap.has(token)) {
             return this.dataMap.get(token);
         }
@@ -44,7 +43,8 @@ class DiContainer {
         }
         return (_a = this.parent) === null || _a === void 0 ? void 0 : _a.resolve(token);
     }
-    factory(injection) {
+    factory(arg) {
+        const injection = arg instanceof injection_1.default ? arg : new injection_1.default({ token: arg });
         const token = injection.getToken();
         const data = this.getData(token);
         if (data !== undefined) {
@@ -67,12 +67,18 @@ class DiContainer {
         if (!this.dataMap.has(token)) {
             this.dataMap.set(token, data);
             this.addData(data);
+            this.notify(token, data);
         }
         else {
             if (this.dataMap.get(token) !== data) {
                 throw new Error('Different values ​​in the container');
             }
         }
+    }
+    notify(token, data) {
+        this.children.forEach(container => {
+            container.notify(token, data);
+        });
     }
     addData(data) {
         this.dataSet.add(data);

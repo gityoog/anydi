@@ -3,6 +3,7 @@ import DiInjection from "./injection";
 import DiInfo from "./info";
 import DiMetadata from "./metedata";
 import { AllConstructors } from "./utils";
+import Config from './config';
 export declare function Inject(token?: any): <T extends Object>(prototype: T, key: string) => void;
 export declare function InjectRef(ref: () => any): <T extends Object>(prototype: T, key: string) => void;
 export declare function Optional({ token, ref }?: {
@@ -21,7 +22,6 @@ export declare function Destroy<T extends Object>(prototype: T, propertyKey: str
 export declare function DiFrom(instance: any): {
     for: <T>(fn: () => T) => T;
 };
-export declare function DiRoot(...args: ConstructorParameters<typeof DiContainer>): {
-    for: <T>(fn: () => T) => T;
-};
+export declare function Root(...args: ConstructorParameters<typeof DiContainer>): <T extends AllConstructors>(target: T) => T;
+export declare function setConfig(newConfig: Partial<typeof Config>): void;
 export { DiContainer, DiInjection, DiInfo, DiMetadata };

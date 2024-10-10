@@ -7,6 +7,7 @@ const container_1 = __importDefault(require("../container"));
 const metedata_1 = __importDefault(require("../metedata"));
 const track_1 = __importDefault(require("../track"));
 const utils_1 = require("../utils");
+const config_1 = __importDefault(require("../config"));
 class DiInfo {
     static Get(ins) {
         return this.data.get(ins);
@@ -33,14 +34,20 @@ class DiInfo {
         this.injections = new Map();
         this.isInitialized = false;
         this.isDestroyed = false;
-        const container = track_1.default.take();
-        if (!container) {
-            throw new Error(`'${ins.constructor.name}' must be created with container`);
-        }
         const prototypes = (0, utils_1.getPrototypeChain)(ins);
         const isService = metedata_1.default.isService(prototypes);
         if (!isService) {
             throw new Error(`'${ins.constructor.name}' must be decorated with @Service()`);
+        }
+        let container = track_1.default.take();
+        if (!container) {
+            const root = metedata_1.default.getRoot(prototypes);
+            if (root) {
+                container = new container_1.default(...root);
+            }
+            else {
+                throw new Error(`'${ins.constructor.name}' must be created with container`);
+            }
         }
         const containerOptions = metedata_1.default.getContainerOptions(prototypes);
         if (containerOptions) {
@@ -71,7 +78,7 @@ class DiInfo {
                         configurable: true
                     });
                 }
-                else if (injection.lazy) {
+                else if (injection.lazy || config_1.default.defaultLazy) {
                     Object.defineProperty(this.ins, key, {
                         get: () => this.getData(key),
                         set: (value) => {

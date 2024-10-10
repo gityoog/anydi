@@ -9,13 +9,14 @@ $ npm install anydi --save
 ## Usage
 
 ```ts
-import { Container, Destroy, DiFrom, Inject, Lazy, DiRoot, Service } from "anydi"
+import { Container, Destroy, Inject, Lazy, DiContainer, Service, Root, setConfig } from "../src"
 
-let id = 0
+setConfig({ defaultLazy: true })
 
 @Service()
 class ChildValue {
-  id = id++
+  static id = 0
+  id = ChildValue.id++
   constructor() {
     console.log('Child value:', this.id)
   }
@@ -51,6 +52,7 @@ class Test3 {
   @Inject() value!: ChildValue
 }
 
+@Root()
 @Service()
 class Test {
   @Inject() private test2!: Test2
@@ -68,8 +70,13 @@ class Test {
   }
 }
 
-const test = DiRoot().for(() => new Test())
+const test = new Test
 test.destroy()
+
+// or without @Root
+
+const test2 = new DiContainer().factory(Test) // or new DiContainer().track(() => new Test)
+test2.destroy()
 ```
 
 ## changelog
