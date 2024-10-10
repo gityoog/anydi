@@ -87,9 +87,6 @@ function Destroy(prototype, propertyKey, descriptor) {
 }
 function DiFrom(instance) {
     const container = container_1.default.Get(instance);
-    if (!container) {
-        throw new Error(`'${instance.constructor.name}' not found container`);
-    }
     return {
         for: (fn) => container.track(fn),
         add: (fn, token) => {

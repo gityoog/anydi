@@ -34,8 +34,7 @@ class DiInfo {
         this.data.delete(ins);
     }
     static GetContainer(ins) {
-        var _a;
-        return (_a = this.Get(ins)) === null || _a === void 0 ? void 0 : _a.container;
+        return this.GetOrCreate(ins).container;
     }
     constructor(ins, prototypes = (0, utils_1.getPrototypeChain)(ins)) {
         this.ins = ins;

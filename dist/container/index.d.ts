@@ -2,7 +2,7 @@ import DiInjection from "../injection";
 import DiToken from "../token";
 import { Constructor } from "../utils";
 export default class DiContainer {
-    static Get(instance: any): DiContainer | undefined;
+    static Get(instance: any): DiContainer;
     static id: number;
     private dataMap;
     private dataSet;

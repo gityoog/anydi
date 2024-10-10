@@ -7,7 +7,7 @@ export default class DiInfo {
     static GetOrCreate(ins: Data): DiInfo;
     static Create(ins: Data, prototypes?: Object[]): DiInfo;
     static Delete(ins: Data): void;
-    static GetContainer(ins: Data): DiContainer | undefined;
+    static GetContainer(ins: Data): DiContainer;
     private container;
     private injections;
     private destroyCallbacks;
