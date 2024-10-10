@@ -83,9 +83,6 @@ export function Destroy<T extends Object>(prototype: T, propertyKey: string, des
 
 export function DiFrom(instance: any) {
   const container = DiContainer.Get(instance)
-  if (!container) {
-    throw new Error(`'${instance.constructor.name}' not found container`)
-  }
   return {
     for: <T>(fn: () => T) => container.track(fn),
     add: <T>(fn: () => T, token?: unknown) => {

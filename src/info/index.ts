@@ -33,7 +33,7 @@ export default class DiInfo {
     this.data.delete(ins)
   }
   static GetContainer(ins: Data) {
-    return this.Get(ins)?.container
+    return this.GetOrCreate(ins).container
   }
   private container
   private injections = new Map<string, DiInjection>()
