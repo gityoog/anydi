@@ -81,7 +81,15 @@ export function Destroy<T extends Object>(prototype: T, propertyKey: string, des
 
 export function DiFrom(instance: any) {
   return {
-    for: <T>(fn: () => T) => DiInfo.GetOrCreate(instance).track(fn)
+    for: <T>(fn: () => T) => DiInfo.GetOrCreate(instance).track(fn),
+    add: <T>(fn: () => T, token?: unknown) => {
+      const container = DiContainer.Get(instance)
+      if (!container) {
+        throw new Error(`'${instance.constructor.name}' must be created with container`)
+      }
+      const data = container.track(fn)
+      return token ? container.setData(token, data) : container.addData(data)
+    }
   }
 }
 

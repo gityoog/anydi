@@ -71,7 +71,8 @@ export default class DiContainer {
     }
   }
 
-  setData<T>(token: DiToken, data: T) {
+  setData<T>(arg: DiToken | unknown, data: T) {
+    const token = arg instanceof DiToken ? arg : DiToken.GetOrCreate(arg)
     if (!this.dataMap.has(token)) {
       this.dataMap.set(token, data)
       this.addData(data)
