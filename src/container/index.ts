@@ -12,7 +12,7 @@ export default class DiContainer {
   private dataMap = new WeakMap<DiToken, any>()
   private dataSet = new Set<any>()
   private resolvers = new WeakMap<DiToken, () => any>()
-
+  private creating = new WeakMap<DiToken, boolean>()
   private children = new Set<this>()
   private parent?: this
 
@@ -57,8 +57,14 @@ export default class DiContainer {
     if (data !== undefined) {
       return data
     }
+    if (this.creating.get(token)) {
+      console.log('Circular dependency with:', token.value)
+      throw new Error('Circular dependency')
+    }
+    this.creating.set(token, true)
     const value = this.track(() => this.resolve(token) || injection.factory())
     this.setData(token, value)
+    this.creating.delete(token)
     return value
   }
 
@@ -106,6 +112,7 @@ export default class DiContainer {
       DiInfo.Get(data)?.destroy()
     })
     this.dataSet.clear()
+    this.creating = null!
     this.dataSet = null!
     this.dataMap = null!
     this.parent = null!
