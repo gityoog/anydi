@@ -2,6 +2,7 @@ import DiInjection from "../injection"
 import DiInfo from "../info"
 import DiToken from "../token"
 import DiTrack from "../track"
+import { Constructor } from "../utils"
 
 export default class DiContainer {
   static Get(instance: any) {
@@ -33,10 +34,8 @@ export default class DiContainer {
     this.parent = parent
   }
 
-  getData(token: DiToken | any): any {
-    if (!(token instanceof DiToken)) {
-      token = DiToken.GetOrCreate(token)
-    }
+  getData(arg: DiToken | unknown): any {
+    const token = arg instanceof DiToken ? arg : DiToken.GetOrCreate(arg)
     if (this.dataMap.has(token)) {
       return this.dataMap.get(token)!
     } else {
@@ -51,7 +50,8 @@ export default class DiContainer {
     return this.parent?.resolve(token)
   }
 
-  factory(injection: DiInjection) {
+  factory<T>(arg: DiInjection | T): T extends Constructor ? InstanceType<T> : any {
+    const injection = arg instanceof DiInjection ? arg : new DiInjection({ token: arg })
     const token = injection.getToken()
     const data = this.getData(token)
     if (data !== undefined) {
@@ -75,11 +75,18 @@ export default class DiContainer {
     if (!this.dataMap.has(token)) {
       this.dataMap.set(token, data)
       this.addData(data)
+      this.notify(token, data)
     } else {
       if (this.dataMap.get(token) !== data) {
         throw new Error('Different values ​​in the container')
       }
     }
+  }
+
+  notify<T>(token: DiToken, data: T) {
+    this.children.forEach(container => {
+      container.notify(token, data)
+    })
   }
 
   addData<T>(data: T) {
