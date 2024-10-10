@@ -3,6 +3,7 @@ import DiInjection from "../injection"
 import DiMetadata from "../metedata"
 import DiTrack from "../track"
 import { getPrototypeChain } from "../utils"
+import Config from '../config'
 
 type Data = any
 
@@ -30,14 +31,19 @@ export default class DiInfo {
   private injections = new Map<string, DiInjection>()
   private destroyCallbacks: Function[]
   constructor(private ins: Data) {
-    const container = DiTrack.take()
-    if (!container) {
-      throw new Error(`'${ins.constructor.name}' must be created with container`)
-    }
     const prototypes = getPrototypeChain(ins)
     const isService = DiMetadata.isService(prototypes)
     if (!isService) {
       throw new Error(`'${ins.constructor.name}' must be decorated with @Service()`)
+    }
+    let container = DiTrack.take()
+    if (!container) {
+      const root = DiMetadata.getRoot(prototypes)
+      if (root) {
+        container = new DiContainer(...root)
+      } else {
+        throw new Error(`'${ins.constructor.name}' must be created with container`)
+      }
     }
     const containerOptions = DiMetadata.getContainerOptions(prototypes)
     if (containerOptions) {
@@ -67,7 +73,7 @@ export default class DiInfo {
             enumerable: true,
             configurable: true
           })
-        } else if (injection.lazy) {
+        } else if (injection.lazy || Config.defaultLazy) {
           Object.defineProperty(this.ins, key, {
             get: () => this.getData(key),
             set: (value) => {
