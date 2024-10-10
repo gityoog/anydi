@@ -3,6 +3,7 @@ import DiInjection from "./injection"
 import DiInfo from "./info"
 import DiMetadata from "./metedata"
 import { AllConstructors } from "./utils"
+import Config from './config'
 
 export function Inject(token?: any) {
   return function <T extends Object>(prototype: T, key: string) {
@@ -84,10 +85,15 @@ export function DiFrom(instance: any) {
   }
 }
 
-export function DiRoot(...args: ConstructorParameters<typeof DiContainer>) {
-  return {
-    for: <T>(fn: () => T) => new DiContainer(...args).track(fn)
+export function Root(...args: ConstructorParameters<typeof DiContainer>) {
+  return function <T extends AllConstructors>(target: T) {
+    DiMetadata.defineRoot(target.prototype, args)
+    return target
   }
+}
+
+export function setConfig(newConfig: Partial<typeof Config>) {
+  Object.assign(Config, newConfig)
 }
 
 export {
